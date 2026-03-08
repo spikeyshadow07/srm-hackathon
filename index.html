@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduGuard — AI Early Warning System | Student Dropout Risk</title>
+  <meta name="description" content="AI-powered Early Warning System for monitoring and preventing student dropout in government schools. Real-time risk analytics, interventions, and insights." />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<!-- ─── TEACHER LOGIN SCREEN ─────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="logo-icon">🛡️</div>
+      <div>
+        <div class="logo-title">EduGuard AI</div>
+        <div class="logo-sub">Teacher Portal Login</div>
+      </div>
+    </div>
+    <form id="login-form" class="login-form">
+      <div class="form-group">
+        <label class="form-label" for="login-email">Official Email</label>
+        <input type="email" id="login-email" class="form-control" placeholder="teacher@school.gov" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="login-password">Password</label>
+        <input type="password" id="login-password" class="form-control" placeholder="Enter password" required />
+      </div>
+      <button type="submit" class="submit-btn">Sign in as Teacher</button>
+      <p class="login-hint">Demo login: <strong>teacher@school.gov</strong> / <strong>teacher123</strong></p>
+    </form>
+  </div>
+</div>
+
+<!-- ─── MAIN APP SHELL (HIDDEN UNTIL LOGIN) ──────────────── -->
+<div id="app-shell">
+
+<!-- ─── SIDEBAR ──────────────────────────────────────────── -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🛡️</div>
+    <div class="logo-text">
+      <div class="logo-title">EduGuard AI</div>
+      <div class="logo-sub">Dropout Prevention System</div>
+    </div>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section-label">Navigation</div>
+
+  <div class="nav-item active" data-view="dashboard">
+    <span class="nav-icon">📊</span> Dashboard
+  </div>
+  <div class="nav-item" data-view="students">
+    <span class="nav-icon">👥</span> Students
+  </div>
+  <div class="nav-item" data-view="analytics">
+    <span class="nav-icon">📈</span> Analytics
+  </div>
+  <div class="nav-item" data-view="interventions">
+    <span class="nav-icon">🎯</span> Interventions
+  </div>
+  <div class="nav-item" data-view="reports">
+    <span class="nav-icon">📄</span> Reports
+  </div>
+  <div class="nav-item" data-view="schools">
+    <span class="nav-icon">🏫</span> Schools
+  </div>
+
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section-label">Alerts</div>
+  <div class="nav-item" data-view="students" onclick="document.getElementById('filter-risk').value='Critical';onFilterChange({target:{id:'filter-risk',value:'Critical'}});">
+    <span class="nav-icon">🔴</span> Critical Risk
+    <span class="nav-badge" id="alert-badge">0</span>
+  </div>
+
+  <div class="sidebar-footer">
+    <strong>Ministry of Education</strong><br/>
+    District School Info. System v2.1<br/>
+    Last Sync: 07-Mar-2026
+  </div>
+</nav>
+
+<!-- ─── HEADER ────────────────────────────────────────────── -->
+<header id="header">
+  <div class="header-left">
+    <button id="hamburger">☰</button>
+    <span id="breadcrumb">Dashboard</span>
+  </div>
+  <div class="header-right">
+    <button id="help-btn" class="clear-btn" style="margin-right:12px;">❓ Help</button>
+    <span class="header-chip">🏫 0 Schools · 0 Students</span>
+    <div class="user-info">
+      <div class="user-avatar" id="user-avatar">T</div>
+      <div class="user-meta">
+        <div class="user-name" id="user-name">Teacher</div>
+        <div class="user-role" id="user-role">Teacher</div>
+      </div>
+      <button id="logout-btn" class="clear-btn">Logout</button>
+    </div>
+    <span class="header-date">07 Mar 2026</span>
+  </div>
+</header>
+
+<!-- ─── MAIN CONTENT ──────────────────────────────────────── -->
+<main id="main">
+
+  <!-- ══════════ DASHBOARD ══════════ -->
+  <section class="view" id="view-dashboard">
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--kpi-color:#60a5fa">
+        <div class="kpi-label">Total Students</div>
+        <div class="kpi-value" id="kpi-total">—</div>
+        <div class="kpi-icon">👥</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color:#ef4444">
+        <div class="kpi-label">Critical Risk</div>
+        <div class="kpi-value" id="kpi-critical">—</div>
+        <div class="kpi-icon">🚨</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color:#f97316">
+        <div class="kpi-label">High Risk</div>
+        <div class="kpi-value" id="kpi-high">—</div>
+        <div class="kpi-icon">⚠️</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color:#22c55e">
+        <div class="kpi-label">Low Risk</div>
+        <div class="kpi-value" id="kpi-low">—</div>
+        <div class="kpi-icon">✅</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color:#8b5cf6">
+        <div class="kpi-label">Active Interventions</div>
+        <div class="kpi-value" id="kpi-interventions">0</div>
+        <div class="kpi-icon">🎯</div>
+      </div>
+      <div class="kpi-card" style="--kpi-color:#f59e0b">
+        <div class="kpi-label">Avg. Risk Score</div>
+        <div class="kpi-value" id="kpi-avg-risk">—</div>
+        <div class="kpi-icon">📉</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="card">
+        <div class="chart-title">Risk Distribution</div>
+        <div class="chart-wrap"><canvas id="chart-donut"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="chart-title">At-Risk Students by School</div>
+        <div class="chart-wrap"><canvas id="chart-school-bar"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="chart-title">Monthly Risk Trend (Academic Year)</div>
+        <div class="chart-wrap"><canvas id="chart-trend"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section-heading">🚨 Critical Risk — Immediate Attention Required</div>
+    <div id="dashboard-alerts"></div>
+  </section>
+
+  <!-- ══════════ STUDENTS ══════════ -->
+  <section class="view" id="view-students">
+    <div class="section-heading" style="margin-bottom:16px">👥 Student Risk Directory <span id="student-count" style="font-size:13px;color:var(--text-muted);font-weight:500;margin-left:8px"></span></div>
+    <div class="filters-bar">
+      <input type="text" id="filter-search" class="filter-input" placeholder="🔍  Search by name, roll no, or district…" />
+      <button id="export-students" class="clear-btn" style="margin-left:8px;">⬇️ CSV</button>
+      <button id="export-students-pdf" class="clear-btn">📄 PDF</button>
+      <button id="export-students-word" class="clear-btn">📝 Word</button>
+      <button id="send-parent-alerts" class="clear-btn">📤 Send Parent Alerts</button>
+      <select id="filter-school" class="filter-input"></select>
+      <select id="filter-grade" class="filter-input">
+        <option value="all">All Grades</option>
+        <option value="6">Grade 6</option>
+        <option value="7">Grade 7</option>
+        <option value="8">Grade 8</option>
+        <option value="9">Grade 9</option>
+        <option value="10">Grade 10</option>
+      </select>
+      <select id="filter-risk" class="filter-input">
+        <option value="all">All Risk Levels</option>
+        <option value="Critical">🔴 Critical</option>
+        <option value="High">🟠 High</option>
+        <option value="Medium">🟡 Medium</option>
+        <option value="Low">🟢 Low</option>
+      </select>
+      <select id="filter-gender" class="filter-input">
+        <option value="all">All Genders</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+      <button class="clear-btn" id="clear-filters">✕ Clear</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Roll No</th>
+            <th data-sort="name">Name <span class="sort-icon">↕</span></th>
+            <th data-sort="gradeNum">Grade <span class="sort-icon">↕</span></th>
+            <th data-sort="attendance">Attendance <span class="sort-icon">↕</span></th>
+            <th data-sort="academicScore">Score <span class="sort-icon">↕</span></th>
+            <th>District</th>
+            <th>Risk Level</th>
+            <th data-sort="riskScore">Risk Score <span class="sort-icon">↕</span></th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="students-tbody"></tbody>
+      </table>
+    </div>
+    <div id="pagination"></div>
+  </section>
+
+  <!-- ══════════ SCHOOLS (manage/add) ══════════ -->
+  <section class="view" id="view-schools">
+    <div class="section-heading">🏫 Manage Schools</div>
+    <button id="add-school-btn" class="clear-btn" style="margin-bottom:12px;">➕ Add School</button>
+    <button id="add-random-school-btn" class="clear-btn" style="margin-bottom:12px;margin-left:8px;">🎲 Add Random School</button>
+    <div id="schools-list"></div>
+  </section>
+
+
+
+  <!-- ══════════ PROFILE ══════════ -->
+  <section class="view" id="view-profile">
+    <div class="profile-header">
+      <div class="profile-avatar-large" id="profile-avatar">A</div>
+      <div class="profile-info">
+        <h1 id="profile-name">—</h1>
+        <div class="school" id="profile-school">—</div>
+        <div class="meta-row" id="profile-meta">—</div>
+      </div>
+      <div class="risk-ring-wrap">
+        <svg class="risk-ring-svg" width="120" height="120" viewBox="0 0 120 120">
+          <circle class="risk-ring-bg" cx="60" cy="60" r="54"></circle>
+          <circle class="risk-ring-fill" id="risk-ring-svg-circle" cx="60" cy="60" r="54"></circle>
+        </svg>
+        <div class="risk-ring-center">
+          <div id="risk-ring-score">—</div>
+          <div id="risk-ring-label">—</div>
+        </div>
+      </div>
+      <button class="back-btn" onclick="navigateTo('students')">← Back to List</button>
+      <button id="edit-student-btn" class="clear-btn" style="margin-left:12px;">✏️ Edit</button>
+    </div>
+
+    <div class="profile-charts-row">
+      <div class="card">
+        <div class="card-title">📅 Attendance Trend (Academic Year)</div>
+        <div style="height:200px"><canvas id="chart-att-trend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎯 Risk Factor Radar</div>
+        <div style="height:200px"><canvas id="chart-radar"></canvas></div>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      <div class="card">
+        <div class="card-title">📊 Risk Factor Breakdown</div>
+        <div id="factor-bars"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📚 Academic Performance</div>
+        <div style="height:190px;margin-bottom:12px"><canvas id="chart-grade-trend"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card section-gap">
+      <div class="card-title">👤 Student Information</div>
+      <div class="profile-info-grid" id="profile-info-grid">
+        <div class="info-chip"><div class="info-chip-label">Attendance</div><div class="info-chip-val" id="p-attendance">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Academic Score</div><div class="info-chip-val" id="p-score">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Income Tier</div><div class="info-chip-val" id="p-income">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Distance to School</div><div class="info-chip-val" id="p-distance">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Parental Education</div><div class="info-chip-val" id="p-parentEdu">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Parent Engagement</div><div class="info-chip-val" id="p-engagement">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Gender</div><div class="info-chip-val" id="p-gender">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Caste Category</div><div class="info-chip-val" id="p-caste">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Siblings</div><div class="info-chip-val" id="p-siblings">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Child Labour</div><div class="info-chip-val" id="p-working">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Free Lunch Scheme</div><div class="info-chip-val" id="p-lunch">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Scholarship</div><div class="info-chip-val" id="p-scholarship">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Previous Dropout</div><div class="info-chip-val" id="p-prevDropout">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Behavioral Flags</div><div class="info-chip-val" id="p-behavioral">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Phone</div><div class="info-chip-val" id="p-phone">—</div></div>
+        <div class="info-chip"><div class="info-chip-label">Address</div><div class="info-chip-val" id="p-address" style="font-size:12px">—</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🤖 AI Recommendations</div>
+      <div id="recommendations"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ ANALYTICS ══════════ -->
+  <section class="view" id="view-analytics">
+    <div class="section-heading" style="margin-bottom:16px">📈 District-Wide Risk Analytics</div>
+
+    <div class="section-gap">
+      <div class="card-title" style="font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">🏫 Average Risk Score by School</div>
+      <div class="analytics-stats" id="analytics-stats"></div>
+    </div>
+
+    <div class="analytics-chart-grid">
+      <div class="card">
+        <div class="chart-title">Grade-wise At-Risk Students</div>
+        <div class="chart-h300"><canvas id="chart-grade-risk"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="chart-title">Attendance Distribution</div>
+        <div class="chart-h300"><canvas id="chart-att-dist"></canvas></div>
+      </div>
+    </div>
+
+    <div class="analytics-chart-full">
+      <div class="card">
+        <div class="chart-title">Income Tier vs Dropout Risk</div>
+        <div class="chart-h300"><canvas id="chart-income-risk"></canvas></div>
+      </div>
+    </div>
+
+    <div class="analytics-chart-grid" style="margin-bottom:0">
+      <div class="card">
+        <div class="card-title">📊 Key Indicators</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px" id="analytics-key-indicators">
+          <!-- Populated below via inline script -->
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔑 At-Risk Factor Summary</div>
+        <div id="analytics-factor-summary" style="margin-top:4px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ INTERVENTIONS ══════════ -->
+  <section class="view" id="view-interventions">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="section-heading" style="margin-bottom:16px">🎯 Intervention Management</div>
+      <button id="export-interventions" class="clear-btn" style="margin-bottom:16px;">⬇️ CSV</button>
+      <button id="export-interventions-pdf" class="clear-btn" style="margin-bottom:16px;">📄 PDF</button>
+      <button id="export-interventions-word" class="clear-btn" style="margin-bottom:16px;">📝 Word</button>
+    </div>
+
+    <div class="int-stats">
+      <div class="int-stat-card">
+        <div class="int-stat-val" id="int-total" style="color:var(--accent-blue)">0</div>
+        <div class="int-stat-label">Total Interventions</div>
+      </div>
+      <div class="int-stat-card">
+        <div class="int-stat-val" id="int-active" style="color:var(--risk-low)">0</div>
+        <div class="int-stat-label">Active</div>
+      </div>
+      <div class="int-stat-card">
+        <div class="int-stat-val" id="int-completed" style="color:var(--text-muted)">0</div>
+        <div class="int-stat-label">Completed</div>
+      </div>
+    </div>
+
+    <div class="int-layout">
+      <div>
+        <div class="int-filters">
+          <input type="text" id="int-search" class="filter-input" placeholder="🔍 Search student…" style="flex:1" />
+          <select id="int-filter-type" class="filter-input">
+            <option value="all">All Types</option>
+            <option>Schedule Home Visit</option>
+            <option>Enable SMS Alerts</option>
+            <option>Enroll in Remedial</option>
+            <option>Assign Tutor</option>
+            <option>Apply for NSP</option>
+            <option>Alert DCPO</option>
+            <option>Assign Transport</option>
+            <option>Schedule SMC Meet</option>
+            <option>Assign Counselor</option>
+            <option>KGBV Referral</option>
+            <option>Counselor Referral</option>
+            <option>Routine Monitoring</option>
+          </select>
+          <select id="int-filter-status" class="filter-input">
+            <option value="all">All Statuses</option>
+            <option>Active</option>
+            <option>Completed</option>
+          </select>
+        </div>
+        <div id="interventions-list"></div>
+      </div>
+
+      <div class="add-int-form-card">
+        <div class="form-title">➕ Add New Intervention</div>
+        <form id="add-intervention-form">
+          <div class="form-group">
+            <label class="form-label">Student (Critical/High Risk)</label>
+            <select id="int-student-select" class="form-control" required>
+              <option value="">Select Student…</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Intervention Type</label>
+            <select id="int-type" class="form-control" required>
+              <option>Schedule Home Visit</option>
+              <option>Enable SMS Alerts</option>
+              <option>Enroll in Remedial</option>
+              <option>Assign Tutor</option>
+              <option>Apply for NSP</option>
+              <option>Alert DCPO</option>
+              <option>Assign Transport</option>
+              <option>Schedule SMC Meet</option>
+              <option>Assign Counselor</option>
+              <option>KGBV Referral</option>
+              <option>Counselor Referral</option>
+              <option>Routine Monitoring</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notes (optional)</label>
+            <textarea id="int-notes-input" class="form-control" rows="3" placeholder="Add context or instructions…"></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Add Intervention</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ REPORTS ══════════ -->
+  <section class="view" id="view-reports">
+    <div class="section-heading" style="margin-bottom:16px">📄 District Dropout Risk Report</div>
+
+    <div class="export-section">
+      <button class="export-btn primary" onclick="exportCSV()">⬇️ Export Full Data (CSV)</button>
+      <button class="export-btn secondary" onclick="window.print()">🖨️ Print Report</button>
+    </div>
+
+    <div class="reports-grid">
+      <div class="rep-card" style="--rep-icon:'🚨'">
+        <div class="rep-label">Total At-Risk (Critical + High)</div>
+        <div class="rep-value" id="rep-total-risk">—</div>
+        <div class="rep-sub">students requiring action</div>
+      </div>
+      <div class="rep-card" style="--rep-icon:'💸'">
+        <div class="rep-label">BPL Students At-Risk</div>
+        <div class="rep-value" id="rep-bpl">—</div>
+        <div class="rep-sub">below poverty line</div>
+      </div>
+      <div class="rep-card" style="--rep-icon:'👧'">
+        <div class="rep-label">Female Students At-Risk</div>
+        <div class="rep-value" id="rep-female-risk">—</div>
+        <div class="rep-sub">gender vulnerability</div>
+      </div>
+      <div class="rep-card" style="--rep-icon:'🏭'">
+        <div class="rep-label">Child Labour Cases</div>
+        <div class="rep-value" id="rep-working">—</div>
+        <div class="rep-sub">working children identified</div>
+      </div>
+      <div class="rep-card" style="--rep-icon:'📋'">
+        <div class="rep-label">BPL Without Scholarship</div>
+        <div class="rep-value" id="rep-no-scholarship">—</div>
+        <div class="rep-sub">NSP eligible, not enrolled</div>
+      </div>
+      <div class="rep-card" style="--rep-icon:'🔁'">
+        <div class="rep-label">Previous Dropout History</div>
+        <div class="rep-value" id="rep-prev-dropout">—</div>
+        <div class="rep-sub">high recurrence risk</div>
+      </div>
+      <div class="rep-card" style="--rep-icon:'🚌'">
+        <div class="rep-label">Distance Barrier At-Risk</div>
+        <div class="rep-value" id="rep-dist-risk">—</div>
+        <div class="rep-sub">over 10km, at-risk</div>
+      </div>
+      <div class="rep-card" style="--rep-icon:'🎯'">
+        <div class="rep-label">Total Interventions</div>
+        <div class="rep-value" id="rep-interventions">—</div>
+        <div class="rep-sub">logged interventions</div>
+      </div>
+      <div class="rep-card" style="--rep-icon:'☎️'">
+        <div class="rep-label">Child Labour Helpline</div>
+        <div class="rep-value">1098</div>
+        <div class="rep-sub">24×7 toll-free childline (India)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🤖 System Overview</div>
+      <div style="color:var(--text-secondary);font-size:13px;line-height:1.8">
+        <p>This AI Early Warning System uses a <strong style="color:var(--text-primary)">Weighted Multi-Factor Risk Model</strong> to identify students at risk of dropping out from government schools. The model evaluates six key dimensions:</p>
+        <br/>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:4px">
+          <div style="background:var(--bg-card2);padding:12px;border-radius:8px;border:1px solid var(--border)"><strong style="color:#93c5fd">Attendance</strong> (30%)<br/>Primary dropout predictor. Below 60% triggers critical alert.</div>
+          <div style="background:var(--bg-card2);padding:12px;border-radius:8px;border:1px solid var(--border)"><strong style="color:#93c5fd">Academic Performance</strong> (25%)<br/>Failing grades compound attendance issues.</div>
+          <div style="background:var(--bg-card2);padding:12px;border-radius:8px;border:1px solid var(--border)"><strong style="color:#93c5fd">Socioeconomic Status</strong> (20%)<br/>BPL families face highest financial pressure.</div>
+          <div style="background:var(--bg-card2);padding:12px;border-radius:8px;border:1px solid var(--border)"><strong style="color:#93c5fd">Distance to School</strong> (10%)<br/>Over 10km significantly increases risk.</div>
+          <div style="background:var(--bg-card2);padding:12px;border-radius:8px;border:1px solid var(--border)"><strong style="color:#93c5fd">Family Background</strong> (10%)<br/>Parental education, engagement, prior dropout history.</div>
+          <div style="background:var(--bg-card2);padding:12px;border-radius:8px;border:1px solid var(--border)"><strong style="color:#93c5fd">Behavioral Indicators</strong> (5%)<br/>Disruptive behavior, absenteeism patterns.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+</div> <!-- end #app-shell -->
+
+<!-- ─── TOAST ─────────────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- ─── SCRIPTS ───────────────────────────────────────────── -->
+<script src="data.js"></script>
+<script src="predictions.js"></script>
+<script src="school_predictions.js"></script>
+<script src="risk-engine.js"></script>
+<script src="charts.js"></script>
+<script src="app.js"></script>
+
+<script>
+// Populate analytics key indicators after allStudents is ready
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    const s = window._allStudents || [];
+    const ki = document.getElementById("analytics-key-indicators");
+    if (ki) {
+      const avgAtt = (s.reduce((a,b)=>a+b.attendance,0)/s.length).toFixed(1);
+      const avgScore = (s.reduce((a,b)=>a+b.academicScore,0)/s.length).toFixed(1);
+      const bplPct = ((s.filter(x=>x.incomeTier==="BPL").length/s.length)*100).toFixed(0);
+      const workingPct = ((s.filter(x=>x.workingChild).length/s.length)*100).toFixed(0);
+      ki.innerHTML = [
+        {l:"Avg. Attendance",v:avgAtt+"%",c:"#60a5fa"},
+        {l:"Avg. Academic Score",v:avgScore+"%",c:"#8b5cf6"},
+        {l:"BPL Students",v:bplPct+"%",c:"#f97316"},
+        {l:"Child Labour",v:workingPct+"%",c:"#ef4444"},
+      ].map(x=>`<div style="background:var(--bg-card2);padding:14px;border-radius:8px;border:1px solid var(--border);text-align:center"><div style="font-size:22px;font-weight:800;color:${x.c}">${x.v}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${x.l}</div></div>`).join("");
+    }
+    const fs = document.getElementById("analytics-factor-summary");
+    if (fs) {
+      const factors = [
+        {l:"Students with Attendance < 60%", v:s.filter(x=>x.attendance<60).length, c:"#ef4444"},
+        {l:"Students with Score < 40%", v:s.filter(x=>x.academicScore<40).length, c:"#f97316"},
+        {l:"Students with no Scholarship (BPL)", v:s.filter(x=>x.incomeTier==="BPL"&&!x.scholarshipReceived).length, c:"#eab308"},
+        {l:"Illiterate Parents", v:s.filter(x=>x.parentalEducation==="Illiterate").length, c:"#a78bfa"},
+        {l:"Distance > 10km", v:s.filter(x=>x.distanceKm>10).length, c:"#60a5fa"},
+        {l:"Previous Dropout History", v:s.filter(x=>x.prevDropout).length, c:"#fb923c"},
+      ];
+      fs.innerHTML = factors.map(f=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:13px;color:var(--text-secondary)">${f.l}</span>
+          <span style="font-size:16px;font-weight:800;color:${f.c}">${f.v}</span>
+        </div>`).join("");
+    }
+  }, 200);
+});
+
+// Make navigateTo global
+window.navigateTo = navigateTo;
+</script>
+
+<!-- Tutorial Modal -->
+<div id="tutorial-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="tutorial-title">Welcome to EduGuard!</h2>
+      <button id="tutorial-close" class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="tutorial-content">
+        <p>This is a quick guide to help you get started with the EduGuard AI Early Warning System.</p>
+        <p>Use the sidebar to navigate between different sections of the app.</p>
+      </div>
+      <div class="tutorial-steps">
+        <span id="tutorial-step">1</span> of <span id="tutorial-total">6</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="tutorial-prev" class="btn-secondary" disabled>Previous</button>
+      <button id="tutorial-next" class="btn-primary">Next</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
