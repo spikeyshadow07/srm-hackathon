@@ -293,16 +293,29 @@ function clearHighlights() {
 // AUTH & INIT
 // ────────────────────────────────────────────────────────────
 
-function showLoginScreen() {
+function showEntryScreen() {
+  const entry = document.getElementById("entry-screen");
   const login = document.getElementById("login-screen");
   const shell = document.getElementById("app-shell");
+  if (entry) entry.style.display = "flex";
+  if (login) login.style.display = "none";
+  if (shell) shell.style.display = "none";
+}
+
+function showLoginScreen() {
+  const entry = document.getElementById("entry-screen");
+  const login = document.getElementById("login-screen");
+  const shell = document.getElementById("app-shell");
+  if (entry) entry.style.display = "none";
   if (login) login.style.display = "flex";
   if (shell) shell.style.display = "none";
 }
 
 function showAppShell() {
+  const entry = document.getElementById("entry-screen");
   const login = document.getElementById("login-screen");
   const shell = document.getElementById("app-shell");
+  if (entry) entry.style.display = "none";
   if (login) login.style.display = "none";
   if (shell) shell.style.display = "block";
 }
@@ -340,7 +353,7 @@ function handleLoginSubmit(e) {
 function handleLogout() {
   localStorage.removeItem("eduguardUser");
   currentUser = null;
-  showLoginScreen();
+  showEntryScreen();
 }
 
 function initAppAfterLogin() {
@@ -399,6 +412,18 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", handleLoginSubmit);
   }
 
+  const entryLoginBtn = document.getElementById("entry-login-btn");
+  if (entryLoginBtn && !entryLoginBtn._bound) {
+    entryLoginBtn._bound = true;
+    entryLoginBtn.addEventListener("click", showLoginScreen);
+  }
+
+  const loginBackBtn = document.getElementById("login-back-btn");
+  if (loginBackBtn && !loginBackBtn._bound) {
+    loginBackBtn._bound = true;
+    loginBackBtn.addEventListener("click", showEntryScreen);
+  }
+
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn && !logoutBtn._bound) {
     logoutBtn._bound = true;
@@ -424,7 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showAppShell();
     updateUserUi();
   } else {
-    showLoginScreen();
+    showEntryScreen();
   }
 });
 
