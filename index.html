@@ -532,6 +532,49 @@
 <!-- ─── TOAST ─────────────────────────────────────────────── -->
 <div id="toast-container"></div>
 
+<!-- ─── CHATBOT WIDGET ──────────────────────────────────────── -->
+
+<!-- Floating trigger button -->
+<button id="chatbot-trigger" aria-label="Open EduGuard AI Assistant">
+  <span class="chatbot-open-icon">🤖</span>
+  <span class="chatbot-close-icon">✕</span>
+  <span class="chatbot-notif"></span>
+</button>
+
+<!-- Chat panel -->
+<div id="chatbot-panel" role="dialog" aria-label="EduGuard AI Assistant">
+
+  <!-- Header -->
+  <div class="chatbot-header">
+    <div class="chatbot-header-avatar">🛡️</div>
+    <div class="chatbot-header-info">
+      <div class="chatbot-header-name">EduGuard AI Assistant</div>
+      <div class="chatbot-header-status">Online · Ready to help</div>
+    </div>
+    <button class="chatbot-header-close" id="chatbot-close-btn" aria-label="Close chat">✕</button>
+  </div>
+
+  <!-- Messages -->
+  <div id="chatbot-messages"></div>
+
+  <!-- Quick replies -->
+  <div class="quick-replies" id="chatbot-quick-replies"></div>
+
+  <!-- Input -->
+  <div class="chatbot-input-area">
+    <input
+      type="text"
+      id="chatbot-input"
+      placeholder="Ask about students, risk scores…"
+      autocomplete="off"
+      maxlength="300"
+    />
+    <button id="chatbot-send" aria-label="Send message">➤</button>
+  </div>
+
+  <div class="chatbot-footer">Powered by EduGuard AI · Ministry of Education</div>
+</div>
+
 <!-- ─── SCRIPTS ───────────────────────────────────────────── -->
 <script src="data.js"></script>
 <script src="predictions.js"></script>
@@ -539,6 +582,7 @@
 <script src="risk-engine.js"></script>
 <script src="charts.js"></script>
 <script src="app.js"></script>
+<script src="chatbot.js"></script>
 
 <script>
 // Populate analytics key indicators after allStudents is ready

@@ -12,9 +12,9 @@ function destroyChart(id) {
 }
 
 const CHART_DEFAULTS = {
-  color: "#94a3b8",
-  gridColor: "rgba(148,163,184,0.1)",
-  tickColor: "rgba(148,163,184,0.6)",
+  color: "#4a5568",
+  gridColor: "rgba(99,120,180,0.1)",
+  tickColor: "rgba(74,85,104,0.7)",
 };
 
 // ─── Dashboard: Risk Distribution Donut ─────────────────────
@@ -31,7 +31,7 @@ function renderRiskDonut(canvasId, students) {
       datasets: [{
         data: [counts.Critical, counts.High, counts.Medium, counts.Low],
         backgroundColor: ["#ef4444","#f97316","#eab308","#22c55e"],
-        borderColor: "#0f172a",
+        borderColor: "#ffffff",
         borderWidth: 3,
         hoverOffset: 8,
       }],
