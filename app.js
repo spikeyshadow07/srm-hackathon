@@ -489,6 +489,7 @@ function navigateTo(view, studentId = null) {
     case "interventions": renderInterventionsView(); break;
     case "reports": renderReportsView(); break;
     case "schools": renderSchoolsView(); break;
+    case "n8n": if (window.N8n) window.N8n.renderView(); break;
   }
   updateBreadcrumb(view);
 }
@@ -502,6 +503,7 @@ function updateBreadcrumb(view) {
     interventions: "Interventions",
     reports: "Reports",
     schools: "Schools",
+    n8n: "⚡ Automation (n8n)",
   };
   document.getElementById("breadcrumb").textContent = names[view] || "Dashboard";
 }
