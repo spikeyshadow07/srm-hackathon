@@ -6,6 +6,7 @@
   <title>EduGuard — AI Early Warning System | Student Dropout Risk</title>
   <meta name="description" content="AI-powered Early Warning System for monitoring and preventing student dropout in government schools. Real-time risk analytics, interventions, and insights." />
   <link rel="stylesheet" href="styles.css" />
+  <script src="theme.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
@@ -115,7 +116,25 @@
     <span id="breadcrumb">Dashboard</span>
   </div>
   <div class="header-right">
-    <button id="help-btn" class="clear-btn" style="margin-right:12px;">❓ Help</button>
+    <button id="help-btn" class="clear-btn">❓ Help</button>
+    <div class="theme-switcher-container">
+      <button id="theme-btn" class="theme-btn" title="Change Theme">
+        <span id="theme-btn-icon">💻</span>
+        <span id="theme-btn-label">System</span>
+        <span class="dropdown-arrow">▾</span>
+      </button>
+      <div id="theme-dropdown" class="theme-dropdown" style="display:none;">
+        <button class="theme-option" data-theme="light">
+          <span class="theme-option-icon">☀️</span> Light
+        </button>
+        <button class="theme-option" data-theme="dark">
+          <span class="theme-option-icon">🌙</span> Dark
+        </button>
+        <button class="theme-option" data-theme="system">
+          <span class="theme-option-icon">💻</span> System Default
+        </button>
+      </div>
+    </div>
     <span class="header-chip">🏫 0 Schools · 0 Students</span>
     <div class="user-info">
       <div class="user-avatar" id="user-avatar">T</div>
