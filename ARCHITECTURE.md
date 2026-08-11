@@ -1,356 +1,136 @@
-# EduGuard AI System Architecture
+# EduGuard AI — System Architecture & Workflow Specifications
 
-## High-Level Architecture Overview
+## 1. High-Level Architectural Layers
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                            EduGuard AI System                               │
-│                    Early Warning System for Student Dropout Risk           │
+│                          1. PRESENTATION LAYER (UI)                         │
+│  ┌────────────────────────┐  ┌───────────────────────┐  ┌────────────────┐ │
+│  │ Single Page App (SPA)  │  │ Theme Engine          │  │ AI Chatbot     │ │
+│  │ (index.html, app.js)   │  │ Light / Dark / System │  │ (chatbot.js)   │ │
+│  └────────────────────────┘  └───────────────────────┘  └────────────────┘ │
+│  ┌────────────────────────┐  ┌───────────────────────┐  ┌────────────────┐ │
+│  │ Chart.js Visualizer    │  │ Export Engine         │  │ Tutorial Modal │ │
+│  │ (charts.js)            │  │ (jsPDF, CSV, Word)    │  │ (Walkthrough)  │ │
+│  └────────────────────────┘  └───────────────────────┘  └────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        ▼
+                                      │
+                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                           User Interface Layer                              │
-│                                                                             │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │   Teachers  │  │  Admins     │  │   Parents   │  │ Government  │         │
-│  │             │  │             │  │             │  │ Officials   │         │
-│  │ • Dashboard │  │ • Analytics │  │ • Alerts    │  │ • Reports   │         │
-│  │ • Students  │  │ • Schools   │  │ • Updates   │  │ • Metrics   │         │
-│  │ • Reports   │  │ • Config    │  │             │  │             │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘         │
+│                       2. LOGIC & SERVICE LAYER                              │
+│  ┌────────────────────────┐  ┌───────────────────────┐  ┌────────────────┐ │
+│  │ Multi-Factor Risk      │  │ Intervention          │  │ School Cohort  │ │
+│  │ Scoring (risk-engine)  │  │ Tracker (app.js)      │  │ Manager        │ │
+│  └────────────────────────┘  └───────────────────────┘  └────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        ▼
+                                      │
+                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         Application Layer                                   │
-│                                                                             │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
-│  │   Web Frontend  │  │   Mobile App    │  │   API Gateway   │             │
-│  │                 │  │                 │  │                 │             │
-│  │ • React/Angular │  │ • React Native │  │ • Authentication│             │
-│  │ • Dashboard     │  │ • Notifications │  │ • Rate Limiting│             │
-│  │ • Admin Panel   │  │ • Offline Mode  │  │ • Load Balance │             │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘             │
+│                    3. MACHINE LEARNING & DATA LAYER                         │
+│  ┌────────────────────────┐  ┌───────────────────────┐  ┌────────────────┐ │
+│  │ Scikit-Learn ML Model  │  │ Pre-calculated JSON   │  │ Synthetic Data │ │
+│  │ (Logistic Regression)  │  │ Predictions (ML)      │  │ Engine (data)  │ │
+│  └────────────────────────┘  └───────────────────────┘  └────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        ▼
+                                      │
+                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                          Service Layer                                      │
-│                                                                             │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
-│  │ Risk Assessment │  │ Student Mgmt    │  │ Notification    │             │
-│  │ Service         │  │ Service         │  │ Service         │             │
-│  │                 │  │                 │  │                 │             │
-│  │ • ML Models     │  │ • CRUD Ops      │  │ • Email/SMS     │             │
-│  │ • Scoring       │  │ • Validation    │  │ • Templates     │             │
-│  │ • Explainability│  │ • Audit Trail   │  │ • Queue System  │             │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘             │
-│                                                                             │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
-│  │ Analytics       │  │ Intervention    │  │ Integration     │             │
-│  │ Service         │  │ Management      │  │ Service         │             │
-│  │                 │  │                 │  │                 │             │
-│  │ • Reports       │  │ • Tracking      │  │ • External APIs │             │
-│  │ • Dashboards    │  │ • Recommendations│  │ • Data Sync     │             │
-│  │ • KPIs          │  │ • Outcomes      │  │ • Webhooks       │             │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘             │
+│                    4. INTEGRATION & AUTOMATION LAYER                        │
+│  ┌────────────────────────┐  ┌───────────────────────┐  ┌────────────────┐ │
+│  │ n8n Webhook Client     │  │ Auto-Scheduler        │  │ Activity Log   │ │
+│  │ (n8n.js)               │  │ Timer (setInterval)   │  │ Manager        │ │
+│  └────────────────────────┘  └───────────────────────┘  └────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        ▼
+                                      │ (HTTP POST Webhook)
+                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                          Data Layer                                         │
-│                                                                             │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
-│  │   Primary DB    │  │   Cache        │  │   Data Lake     │             │
-│  │                 │  │                 │  │                 │             │
-│  │ • PostgreSQL    │  │ • Redis         │  │ • S3/Data Lake │             │
-│  │ • Student Data  │  │ • Sessions      │  │ • Raw Data     │             │
-│  │ • Transactions  │  │ • ML Results    │  │ • Analytics    │             │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘             │
-│                                                                             │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
-│  │   ML Models     │  │   File Storage  │  │   Search Index  │             │
-│  │                 │  │                 │  │                 │             │
-│  │ • Model Files   │  │ • Exports       │  │ • Elasticsearch │             │
-│  │ • Training Data │  │ • Reports       │  │ • Fast Search   │             │
-│  │ • Feature Store │  │ • Backups       │  │ • Analytics     │             │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘             │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        Infrastructure Layer                                 │
-│                                                                             │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
-│  │   Cloud Platform│  │   Containers    │  │   Monitoring    │             │
-│  │                 │  │                 │  │                 │             │
-│  │ • AWS/Azure     │  │ • Docker/K8s    │  │ • Prometheus    │             │
-│  │ • Load Balancer │  │ • Microservices │  │ • Grafana       │             │
-│  │ • CDN           │  │ • Auto-scaling  │  │ • Alerting      │             │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘             │
-│                                                                             │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
-│  │   Security      │  │   DevOps        │  │   Backup        │             │
-│  │                 │  │                 │  │                 │             │
-│  │ • WAF/Firewall  │  │ • CI/CD         │  │ • Disaster Rec  │             │
-│  │ • Encryption    │  │ • IaC           │  │ • Data Backup   │             │
-│  │ • IAM           │  │ • Testing       │  │ • Point-in-time │             │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘             │
+│                     5. EXTERNAL AUTOMATION (n8n)                            │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌───────────────┐ ┌──────────────┐ │
+│  │  WhatsApp API   │ │  Telegram Bot   │ │  Gmail / SMTP │ │ Google Sheets│ │
+│  └─────────────────┘ └─────────────────┘ └───────────────┘ └──────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Detailed Component Breakdown
+---
 
-### 1. User Interface Layer
-**Web Dashboard (React/Vue/Angular)**
-- Teacher Portal: Student monitoring, intervention management
-- Admin Portal: Analytics, school management, system configuration
-- Parent Portal: Child progress, alerts, communication
+## 2. Detailed Data Flow Sequence
 
-**Mobile Applications**
-- Teacher App: Quick access, offline capabilities
-- Parent App: Notifications, progress updates
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Teacher as Teacher / Admin
+    participant UI as Web Frontend (index.html / app.js)
+    participant RE as Risk Engine (risk-engine.js)
+    participant ML as ML Model Service (ml_model.py)
+    participant N8N as n8n Integration (n8n.js)
+    actor n8n as n8n Workflow Server
+    actor Ext as External Channels (WhatsApp/Telegram/Email)
 
-### 2. Application Layer
-**API Gateway**
-- Authentication & Authorization
-- Rate limiting & throttling
-- Request routing & load balancing
-- API versioning & documentation
+    %% 1. Initialization
+    Teacher->>UI: Opens Application (index.html)
+    UI->>RE: Load Raw Student Data (data.js)
+    RE->>ML: Fetch ML Predictions (student_predictions.json)
+    ML-->>RE: Return Predicted Probabilities
+    RE->>RE: Calculate Weighted Multi-Factor Scores (Attendance, Academics, Distance, etc.)
+    RE-->>UI: Return Enriched Student Cohort (_allStudents)
+    UI->>UI: Render KPI Cards, Donut Charts & Alert Table
 
-**Microservices Architecture**
-- Risk Assessment Service
-- Student Management Service
-- Notification Service
-- Analytics Service
-- Intervention Management Service
+    %% 2. User Interactions
+    Teacher->>UI: Filter by "Critical Risk" or Search Student
+    UI->>UI: Update Table & Re-render Visualizations
 
-### 3. Service Layer
-
-#### Risk Assessment Service
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Data Input    │───▶│ Feature         │───▶│   ML Model      │
-│                 │    │ Engineering     │    │                 │
-│ • Student Data  │    │                 │    │ • Logistic Reg  │
-│ • Attendance    │    │ • Normalization │    │ • Random Forest │
-│ • Grades        │    │ • Encoding      │    │ • Neural Net    │
-│ • Demographics  │    │ • Aggregation   │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                                      │
-                                                      ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Risk Score    │───▶│ Explainability  │───▶│ Recommendations │
-│                 │    │                 │    │                 │
-│ • Probability   │    │ • SHAP Values   │    │ • Interventions │
-│ • Confidence    │    │ • Feature Imp   │    │ • Actions       │
-│ • Category      │    │ • Counterfactual│    │ • Timeline      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+    %% 3. n8n Automation Alert Forwarding
+    Teacher->>UI: Click "📡 Send All At-Risk" or Auto-Schedule Timer fires
+    UI->>N8N: Trigger sendToN8n(filteredStudents)
+    N8N->>N8N: Build Structured JSON Payload (Summary + Student Details + Recommendations)
+    N8N->>n8n: HTTP POST Webhook Request (Payload)
+    n8n->>n8n: Evaluate Conditions (Filter Critical/High Risk)
+    n8n->>Ext: Dispatch WhatsApp / Telegram / Email Notifications
+    n8n-->>N8N: Return HTTP Response
+    N8N->>UI: Display Toast Notification & Log Activity Entry
 ```
 
-#### Notification Service
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Trigger       │───▶│   Template      │───▶│   Delivery      │
-│                 │    │   Engine        │    │   Channel       │
-│ • Risk Threshold│    │                 │    │                 │
-│ • Schedule      │    │ • Email         │    │ • SMTP          │
-│ • Manual        │    │ • SMS           │    │ • SMS Gateway   │
-│                 │    │ • Push          │    │ • Push Service  │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
+---
 
-### 4. Data Layer
+## 3. n8n Webhook Data Flow Architecture
 
-#### Database Schema
-```
-Student Table
-├── id (PK)
-├── school_id (FK)
-├── personal_info
-│   ├── name
-│   ├── date_of_birth
-│   ├── gender
-│   ├── contact_details
-│   └── address
-├── academic_data
-│   ├── enrollment_date
-│   ├── grade
-│   ├── attendance_records
-│   └── performance_metrics
-├── socio_economic
-│   ├── family_income
-│   ├── parental_education
-│   ├── caste_category
-│   └── distance_to_school
-└── risk_assessment
-    ├── current_risk_score
-    ├── risk_category
-    ├── last_assessment_date
-    └── intervention_history
+```mermaid
+flowchart LR
+    subgraph EduGuard [EduGuard AI Application]
+        A[Student Risk Dataset] --> B[n8n.js Client]
+        B --> C{Trigger Event}
+        C -->|Manual Click| D[Build Payload]
+        C -->|Cron Timer| D
+        C -->|Test Button| D
+    end
 
-School Table
-├── id (PK)
-├── name
-├── district
-├── infrastructure_data
-├── teacher_student_ratio
-└── performance_metrics
+    subgraph WebhookEndpoint [n8n Workflow Engine]
+        D -->|HTTP POST JSON| E[n8n Webhook Node]
+        E --> F{IF Critical Students > 0}
+        F -->|Yes| G[Telegram Bot Node]
+        F -->|Yes| H[Gmail / SMTP Node]
+        F -->|Yes| I[WhatsApp Business Node]
+        F -->|Yes| J[Google Sheets Log Node]
+        F -->|No| K[End Workflow]
+    end
 
-Intervention Table
-├── id (PK)
-├── student_id (FK)
-├── type
-├── status
-├── assigned_to
-├── start_date
-├── end_date
-├── outcome
-└── notes
+    G --> L((District Officers))
+    H --> M((School Headmasters))
+    I --> N((Parents / Guardians))
 ```
 
-### 5. Infrastructure Layer
+---
 
-#### Deployment Architecture
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Load Balancer (AWS ALB)                  │
-└─────────────────────────────────────────────────────────────┘
-                                │
-                ┌───────────────┼───────────────┐
-                │               │               │
-        ┌───────▼───────┐ ┌─────▼─────┐ ┌───────▼───────┐
-        │   Web Server  │ │   API     │ │   Worker      │
-        │   (Nginx)     │ │   Gateway │ │   Queue       │
-        └───────────────┘ └───────────┘ └───────────────┘
-                │               │               │
-        ┌───────▼───────┐ ┌─────▼─────┐ ┌───────▼───────┐
-        │   Frontend    │ │ Micro-    │ │   Background  │
-        │   Service     │ │ services  │ │   Jobs        │
-        │   (React)     │ │ (Python)  │ │   (Python)    │
-        └───────────────┘ └───────────┘ └───────────────┘
-                                │
-                ┌───────────────┼───────────────┐
-                │               │               │
-        ┌───────▼───────┐ ┌─────▼─────┐ ┌───────▼───────┐
-        │   PostgreSQL  │ │   Redis   │ │   S3 Storage  │
-        │   Database    │ │   Cache   │ │   (Files)     │
-        └───────────────┘ └───────────┘ └───────────────┘
-```
+## 4. Component Breakdown & Functional Responsibilities
 
-#### Security Architecture
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Web Application Firewall                 │
-└─────────────────────────────────────────────────────────────┘
-                                │
-                ┌───────────────┼───────────────┐
-                │               │               │
-        ┌───────▼───────┐ ┌─────▼─────┐ ┌───────▼───────┐
-        │   Authentication│ │ Authorization │ │   Encryption   │
-        │   Service       │ │ Service        │ │   Service      │
-        │   (JWT/OAuth)  │ │ (RBAC)         │ │   (AES-256)    │
-        └───────────────┘ └───────────┘ └───────────────┘
-                                │
-                ┌───────────────┼───────────────┐
-                │               │               │
-        ┌───────▼───────┐ ┌─────▼─────┐ ┌───────▼───────┐
-        │   Audit Logging│ │ Data Masking  │ │   Monitoring   │
-        │                │ │                │ │                │
-        │   (ELK Stack)  │ │ (PII Protection)│ │ (SIEM)         │
-        └───────────────┘ └───────────┘ └───────────────┘
-```
-
-## Data Flow Diagram
-
-```
-External Data Sources
-        │
-        ▼
-┌───────────────┐     ┌───────────────┐     ┌───────────────┐
-│   Data Ingestion │──▶│   Data Processing │──▶│   Feature Store  │
-│                 │     │                 │     │                 │
-│ • School APIs   │     │ • Cleaning       │     │ • Student       │
-│ • Government DB │     │ • Validation     │     │   Features      │
-│ • Surveys       │     │ • Transformation │     │ • Time Series    │
-└───────────────┘     └───────────────┘     └───────────────┘
-        │                       │                       │
-        ▼                       ▼                       ▼
-┌───────────────┐     ┌───────────────┐     ┌───────────────┐
-│   ML Training │◀───▶│   Model Serving │──▶│   Risk Scoring │
-│               │     │                 │     │                 │
-│ • Training     │     │ • REST API      │     │ • Real-time     │
-│ • Validation   │     │ • Batch Scoring │     │ • Batch         │
-│ • Deployment   │     │ • A/B Testing   │     │ • Explanations   │
-└───────────────┘     └───────────────┘     └───────────────┘
-        │                       │                       │
-        ▼                       ▼                       ▼
-┌───────────────┐     ┌───────────────┐     ┌───────────────┐
-│   Dashboard   │◀───▶│   Alerts       │──▶│   Interventions │
-│               │     │                 │     │                 │
-│ • Visualization│     │ • Notifications │     │ • Tracking      │
-│ • Reports      │     │ • Escalation    │     │ • Outcomes      │
-│ • Analytics    │     │ • Templates     │     │ • Feedback      │
-└───────────────┘     └───────────────┘     └───────────────┘
-```
-
-## Technology Choices Rationale
-
-### Frontend
-- **React**: Component-based, large ecosystem, good for complex dashboards
-- **TypeScript**: Type safety, better maintainability
-- **Material-UI**: Consistent design system, accessibility
-
-### Backend
-- **Python FastAPI**: High performance, auto API docs, async support
-- **PostgreSQL**: ACID compliance, complex queries, JSON support
-- **Redis**: High-performance caching, session management
-
-### Machine Learning
-- **scikit-learn**: Production-ready algorithms, easy deployment
-- **pandas**: Data manipulation, time series handling
-- **SHAP**: Model interpretability, regulatory compliance
-
-### Infrastructure
-- **Docker**: Containerization, consistent environments
-- **Kubernetes**: Orchestration, auto-scaling, self-healing
-- **AWS/Azure**: Managed services, global scale, compliance
-
-## Performance Considerations
-
-### Scalability
-- Horizontal scaling with Kubernetes
-- Database read replicas
-- CDN for static assets
-- Message queues for async processing
-
-### Reliability
-- Multi-region deployment
-- Database backups and failover
-- Circuit breakers for external services
-- Comprehensive monitoring and alerting
-
-### Security
-- End-to-end encryption
-- Regular security audits
-- Compliance with data protection regulations
-- Zero-trust architecture
-
-## Integration Points
-
-### External Systems
-- Government Education Management Systems
-- Student Information Systems (SIS)
-- Learning Management Systems (LMS)
-- SMS/Email service providers
-- Payment gateways for interventions
-
-### APIs
-- RESTful APIs for all services
-- GraphQL for complex queries
-- WebSocket for real-time updates
-- Webhooks for external integrations
-
-This architecture provides a scalable, secure, and maintainable foundation for the EduGuard AI system, designed to handle the complexities of educational data while ensuring privacy and performance.</content>
-<parameter name="filePath">c:\Users\krish\OneDrive\Desktop\New folder (2)\ARCHITECTURE.md
+| Layer / Component | File | Responsibilities |
+|---|---|---|
+| **Presentation (UI)** | `index.html`, `styles.css` | SPA layout, CSS design system, responsive grids, Light/Dark theme variable bindings. |
+| **Theme Engine** | `theme.js` | Theme toggle logic (`light`, `dark`, `system`), local storage persistence, FOUC prevention. |
+| **SPA Controller** | `app.js` | View router (`navigateTo`), table pagination, export actions (PDF/CSV/Word), user login state. |
+| **Chart Visualizer** | `charts.js` | Chart.js wrappers for 8 chart types; dynamic color adjustments when switching theme modes. |
+| **AI Chatbot** | `chatbot.js` | Floating chatbot UI, 16-topic pattern matcher utilizing live `window._allStudents` dataset. |
+| **Risk Engine** | `risk-engine.js` | 6-dimension weighted scoring formula, threshold classification (`Critical`, `High`, `Medium`, `Low`), intervention recommendation rules. |
+| **ML Engine** | `ml_model.py` | Python scikit-learn script for model training (Logistic Regression + StandardScaler). |
+| **n8n Client** | `n8n.js` | Webhook URL configuration, JSON payload builder, auto-scheduler, test runner, local activity logging. |
+| **n8n Workflow** | `n8n_workflow.json` | Declarative n8n workflow file ready for import into n8n instances. |

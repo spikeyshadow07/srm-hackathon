@@ -1,256 +1,199 @@
 <div align="center">
 
-# 🛡️ EduGuard AI
+# 🛡️ EduGuard AI — Early Warning Dropout Prevention System
 
-### Early Warning System for Student Dropout Prevention
+*An AI-powered, multi-factor risk monitoring platform for government schools with automated **n8n workflow integration** for real-time alert forwarding.*
 
-*An AI-powered platform for government schools to identify, monitor, and support students at risk of dropping out.*
-
-[![Made with HTML](https://img.shields.io/badge/Made%20with-HTML%2FJS%2FCSS-blue?style=flat-square)](#)
+[![Made with HTML5](https://img.shields.io/badge/Frontend-HTML5%20%2F%20JS%20%2F%20CSS-blue?style=flat-square)](#)
 [![ML Model](https://img.shields.io/badge/ML-scikit--learn-orange?style=flat-square)](#)
-[![Chart.js](https://img.shields.io/badge/Charts-Chart.js-ff6384?style=flat-square)](#)
+[![Automation](https://img.shields.io/badge/Automation-n8n%20Webhooks-ff6d5a?style=flat-square)](#-n8n-automation-workflow)
+[![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-brightgreen?style=flat-square)](#-github-deployment-guide)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](#license)
 
 </div>
 
 ---
 
-## 📖 Overview
-
-**EduGuard AI** is a district-level early warning system built for the Ministry of Education. It uses a weighted multi-factor risk model — backed by a trained scikit-learn ML model — to flag students at risk of dropping out before it happens. Teachers, administrators, and district officials get a unified dashboard with real-time risk analytics, actionable intervention recommendations, and detailed reports.
-
-> Built for the **SRM Hackathon** as a demonstration of AI in public-sector education.
+## 📖 Table of Contents
+- [✨ Features](#-features)
+- [🏗️ Project Structure](#️-project-structure)
+- [🔄 System & Data Workflow](#-system--data-workflow)
+- [⚡ n8n Automation Workflow](#-n8n-automation-workflow)
+- [🚀 Quick Start (Local Setup)](#-quick-start-local-setup)
+- [🌐 GitHub Deployment Guide](#-github-deployment-guide)
+- [🧠 Risk Model Architecture](#-risk-model-architecture)
+- [📜 License](#-license)
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
-|---|---|
-| 📊 **Live Risk Dashboard** | KPI cards, risk distribution donut, trend charts, and per-school bar charts update dynamically |
-| 🔴 **Multi-Level Risk Alerts** | Students classified as Critical / High / Medium / Low based on 6 risk dimensions |
-| 🤖 **AI Chatbot Assistant** | Floating chatbot widget with a 16-topic knowledge base for instant insights without navigating menus |
-| 🧠 **ML Risk Engine** | Trained scikit-learn model (Logistic Regression) with a weighted multi-factor scoring fallback |
-| 👥 **Student Directory** | Searchable, sortable, filterable table with pagination and per-student profile pages |
-| 📈 **Analytics View** | Grade-wise, school-wise, income-tier, and attendance distribution charts |
-| 🎯 **Intervention Manager** | Log, filter, track, and export interventions (home visits, NSP, KGBV referral, counselling, etc.) |
-| 📄 **Report & Export** | One-click CSV, PDF, and Word export of student data and interventions |
-| 🏫 **School Manager** | Add, remove, and manage schools; auto-generate randomised student cohorts |
-| 📧 **Parent Alerts** | Batch send parent notification simulations for critical/high risk students |
-| 🎓 **Tutorial Walkthrough** | 6-step in-app onboarding modal for new users |
+- 📊 **Dynamic Dashboard**: Real-time KPI summary, monthly trend charts, risk distribution donut, and school-level risk breakdown.
+- 🔴 **Weighted Multi-Factor & ML Risk Engine**: Combines attendance (30%), academics (25%), socioeconomic status (20%), distance (10%), family background (10%), and behavior (5%) with a trained `scikit-learn` ML model.
+- ⚡ **n8n Automated Alert Forwarding**: Automatically sends critical and high-risk student alerts to WhatsApp, Telegram, Email, SMS, or Google Sheets via n8n Webhooks.
+- 🎨 **Multi-Theme UI**: Supports ☀️ Light, 🌙 Dark, and 💻 System Default themes with zero Flash-of-Unstyled-Content (FOUC).
+- 🤖 **AI Assistant Chatbot**: Integrated floating chatbot widget with a 16-topic domain knowledge base for instant queries.
+- 📄 **Multi-Format Export**: One-click data export in CSV, PDF (auto-highlighting high-risk students in red), and Word (`.doc`) format.
+- 🏫 **School & Cohort Management**: Add/manage schools and dynamically auto-generate student cohorts.
 
 ---
 
-## 🤖 AI Chatbot
-
-The floating **EduGuard AI Assistant** (bottom-right corner) answers questions about the live dataset in plain English. No page navigation needed.
-
-**Example questions you can ask:**
-- *"How many students are at critical risk?"*
-- *"Which schools have the most at-risk students?"*
-- *"What interventions should I apply for BPL students?"*
-- *"How does the risk scoring model work?"*
-- *"How many children are identified as child labour cases?"*
-
-**Topics covered:**
-Student counts · Risk breakdown · Attendance stats · Academic performance · Socioeconomic / BPL analysis · Child labour · Female student / KGBV · School comparison · Intervention strategies · Previous dropout history · Distance barriers · Risk model explanation · Reports & exports · Navigation guide
-
----
-
-## 🧠 Risk Model
-
-The platform uses a **Weighted Multi-Factor Scoring Model**. Each student is scored across six dimensions:
-
-| Factor | Weight | Trigger |
-|---|---|---|
-| 📅 Attendance | **30%** | Below 60% → Critical flag |
-| 📚 Academic Performance | **25%** | Below 40% score → High flag |
-| 💸 Socioeconomic Status | **20%** | BPL tier increases baseline risk |
-| 🚌 Distance to School | **10%** | >10 km significantly increases risk |
-| 👨‍👩‍👧 Family Background | **10%** | Parental education, prior dropout history |
-| 🚩 Behavioral Indicators | **5%** | Absenteeism patterns, disciplinary flags |
-
-**Risk Categories:**
-
-| Level | Score Range | Action Required |
-|---|---|---|
-| 🔴 Critical | ≥ 75 | Immediate intervention |
-| 🟠 High | 55 – 74 | Priority follow-up |
-| 🟡 Medium | 35 – 54 | Routine monitoring |
-| 🟢 Low | < 35 | Standard support |
-
-If `student_predictions.json` is present, the app uses **ML model predictions** (Logistic Regression trained on synthetic data). Otherwise it falls back to the weighted formula.
-
----
-
-## 🚀 Quick Start
-
-### 1. Open directly in browser
-
-No server, no install needed for the demo:
+## 🏗️ Project Structure
 
 ```
 srm-hackathon-main/
-└── index.html   ← Open this file in Chrome/Edge/Firefox
+│
+├── 📄 index.html                # Main SPA markup shell, views & modals
+├── 🎨 styles.css                # Complete CSS design system (Light/Dark themes, CSS variables)
+├── 🌓 theme.js                  # Light / Dark / System mode theme manager
+├── 🧠 app.js                    # Core SPA router, state management & UI handlers
+├── 📊 charts.js                 # Chart.js wrappers (8 chart types with dark/light themes)
+├── 🤖 chatbot.js                # AI assistant widget with 16-topic live knowledge base
+├── ⚡ n8n.js                    # n8n webhook automation, auto-scheduler & log manager
+├── 📋 n8n_workflow.json         # Pre-configured n8n workflow export file (ready to import)
+│
+├── 📂 Data & ML Engine
+│   ├── data.js                  # Student & school synthetic data generator
+│   ├── risk-engine.js           # Multi-factor risk engine & recommendation rules
+│   ├── ml_model.py              # Python script — trains scikit-learn Logistic Regression
+│   ├── ml_model.pkl             # Serialised trained ML model
+│   ├── scaler.pkl               # Feature scaler (StandardScaler)
+│   ├── predictions.js           # Student ML prediction mappings
+│   ├── school_predictions.js    # School ML prediction mappings
+│   ├── student_predictions.json # Raw student ML predictions
+│   └── school_predictions.json  # Raw school ML predictions
+│
+└── 📖 Documentation
+    ├── README.md                # Project documentation & GitHub guide (this file)
+    ├── ARCHITECTURE.md          # Comprehensive system architecture & data flow diagrams
+    └── PROJECT_PLAN.md          # Hackathon roadmap & project milestones
 ```
 
-**Demo login:**
-- Email: `teacher@school.gov`
-- Password: `teacher123`
+---
 
-### 2. Retrain the ML model (optional)
+## 🔄 System & Data Workflow
 
-Requires Python 3.8+:
+```
+ ┌────────────────┐      ┌─────────────────┐      ┌──────────────────┐
+ │ Student Record │ ───► │   Risk Engine   │ ───► │ ML Model (Python)│
+ │ Data (data.js) │      │ (risk-engine.js)│      │  (ml_model.py)   │
+ └────────────────┘      └─────────────────┘      └──────────────────┘
+                                   │                        │
+                                   ▼                        ▼
+ ┌───────────────────────────────────────────────────────────────────┐
+ │               EduGuard Dashboard & Analytics UI                   │
+ │   • Interactive Charts   • Critical Risk Alerts   • Student Profiles │
+ └───────────────────────────────────────────────────────────────────┘
+               │                                       │
+               ▼                                       ▼
+ ┌───────────────────────────┐           ┌───────────────────────────┐
+ │   n8n Automation Engine   │           │    AI Assistant Chatbot   │
+ │        (n8n.js)           │           │       (chatbot.js)        │
+ └───────────────────────────┘           └───────────────────────────┘
+               │
+               ▼
+ ┌───────────────────────────────────────────────────────────────────┐
+ │                       External Notifications                      │
+ │    💬 WhatsApp   |   ✈️ Telegram   |   📧 Email   |   📊 Sheets     │
+ └───────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## ⚡ n8n Automation Workflow
+
+EduGuard AI connects directly to **n8n Workflows** to deliver instant alerts to educators, administrators, and parents.
+
+### How to Configure n8n:
+
+1. **Install & Run n8n**:
+   ```bash
+   npx n8n
+   # Or run via Docker / n8n Cloud
+   ```
+2. **Import the Workflow**:
+   - Open your n8n dashboard (`http://localhost:5678`).
+   - Click **Workflows** → **Import from File**.
+   - Select the [`n8n_workflow.json`](./n8n_workflow.json) file included in this repository.
+3. **Copy the Webhook URL**:
+   - Open the **Webhook — EduGuard Risk Alert** node.
+   - Copy the **Test** or **Production** URL (e.g. `http://localhost:5678/webhook/eduguard-risk-alert`).
+4. **Connect to EduGuard AI**:
+   - In EduGuard AI, navigate to **⚡ Automation** in the sidebar.
+   - Paste your **n8n Webhook URL**.
+   - Toggle **Enable n8n Integration** and click **💾 Save Settings**.
+   - Click **🧪 Test Webhook** to send a test payload!
+
+---
+
+## 🚀 Quick Start (Local Setup)
+
+No complex server setup is required to test the web frontend!
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/eduguard-ai.git
+   cd eduguard-ai
+   ```
+2. **Launch the App**:
+   - Simply double click `index.html` or open it in any browser (Chrome, Edge, Firefox, Safari).
+
+3. **Demo Credentials**:
+   - **Email**: `teacher@school.gov`
+   - **Password**: `teacher123`
+
+---
+
+## 🌐 GitHub Deployment Guide
+
+### Step 1: Push Code to GitHub
 
 ```bash
-pip install scikit-learn pandas numpy joblib
+# Initialize git (if starting fresh)
+git init
+git add .
+git commit -m "Initial commit: EduGuard AI with n8n integration"
 
-python ml_model.py
+# Create a repo on GitHub, then link it:
+git remote add origin https://github.com/YOUR_USERNAME/eduguard-ai.git
+git branch -M main
+git push -u origin main
 ```
 
-This regenerates `student_predictions.json` and `school_predictions.json` using the trained model.
+### Step 2: Deploy to GitHub Pages (Free Hosting)
+
+1. Go to your repository on **GitHub.com**.
+2. Click **Settings** (top navigation tab).
+3. In the left sidebar, click **Pages**.
+4. Under **Build and deployment**:
+   - **Source**: Select `Deploy from a branch`
+   - **Branch**: Select `main` / `root` (`/`)
+5. Click **Save**.
+6. GitHub will generate your live URL in ~1 minute (e.g. `https://YOUR_USERNAME.github.io/eduguard-ai/`).
 
 ---
 
-## 📁 File Structure
+## 🧠 Risk Model Architecture
 
-```
-srm-hackathon-main/
-│
-├── index.html                  # Main SPA shell — all views & modals
-├── styles.css                  # Design system (professional white/light theme)
-│
-├── app.js                      # Core SPA logic — routing, rendering, events
-├── data.js                     # Student & school data generation
-├── risk-engine.js              # Risk scoring, ML integration, recommendations
-├── charts.js                   # Chart.js chart wrappers (8 chart types)
-├── chatbot.js                  # AI chatbot widget with 16-topic knowledge base
-├── predictions.js              # Loads & maps student ML predictions
-├── school_predictions.js       # Loads & maps school ML predictions
-│
-├── ml_model.py                 # Python — trains scikit-learn risk model
-├── ml_model.pkl                # Serialised trained model (joblib)
-├── scaler.pkl                  # Feature scaler (StandardScaler)
-│
-├── student_predictions.json    # Pre-generated ML risk scores per student
-├── school_predictions.json     # Pre-generated ML risk scores per school
-│
-├── ARCHITECTURE.md             # Full system architecture document
-├── PROJECT_PLAN.md             # Hackathon project plan
-└── README.md                   # This file
-```
+The platform uses a weighted scoring formula combined with ML model predictions:
 
----
-
-## 🗺️ App Navigation
-
-| Section | What you can do |
-|---|---|
-| **Dashboard** | View district KPIs, risk trend charts, critical alerts at a glance |
-| **Students** | Search/filter the full student directory; click any row for the full profile |
-| **Analytics** | Explore grade-wise, school-wise, income-tier, and attendance distribution charts |
-| **Interventions** | Add and track interventions; filter by type/status; export to CSV/PDF/Word |
-| **Reports** | High-level district summary; one-click data exports |
-| **Schools** | Add/remove schools; generate randomised student cohorts |
-
----
-
-## 🎯 Intervention Types
-
-EduGuard supports logging the following government-aligned interventions:
-
-- 🏠 Schedule Home Visit
-- 📱 Enable SMS Alerts to Parents
-- 📖 Enroll in Remedial Classes
-- 🧑‍🏫 Assign Tutor
-- 💰 Apply for NSP (National Scholarship Programme)
-- 👮 Alert DCPO (District Child Protection Officer)
-- 🚌 Assign Transport
-- 📋 Schedule SMC Meeting (School Management Committee)
-- 🧠 Assign Counselor
-- 🏠 KGBV Referral (Kasturba Gandhi Balika Vidyalaya — for girls)
-- 🛋️ Counselor Referral
-- 👁️ Routine Monitoring
-
----
-
-## 📊 Export Options
-
-| Format | Available In |
-|---|---|
-| **CSV** | Students view, Interventions view, Reports |
-| **PDF** | Students view, Interventions view |
-| **Word (.docx)** | Students view, Interventions view |
-| **Print** | Reports view (browser print dialog) |
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | Vanilla HTML5, CSS3, JavaScript (ES6+) |
-| Charts | Chart.js 4.4 |
-| PDF Export | jsPDF + jsPDF-AutoTable |
-| ML Model | scikit-learn (Logistic Regression + StandardScaler) |
-| Typography | Inter — Google Fonts |
-| Data | Synthetic student dataset (procedurally generated via data.js) |
-
----
-
-## 🔧 Customisation
-
-**Add your own schools**
-Go to the Schools tab → Add School (manual) or Add Random School (auto-generates students).
-
-**Change intervention recommendations**
-Edit `generateRecommendations()` in `risk-engine.js` to add or modify recommendation logic.
-
-**Swap in real student data**
-Replace the `generateStudents()` function in `data.js` with an API call or a JSON import from your student information system.
-
-**Retrain the ML model**
-Edit `ml_model.py` to adjust features, model type, or training data, then run it to regenerate the prediction JSON files.
-
-**Change the chatbot knowledge base**
-Edit the `KB` array in `chatbot.js` — each entry has `patterns` (keyword triggers), a `response` function, and optional `quickReplies`.
-
----
-
-## 🌍 Designed For
-
-- 🏫 **Government school teachers** — daily monitoring of at-risk students
-- 📋 **School administrators** — district-level oversight and reporting
-- 🏛️ **Education ministry officials** — district-wide risk analytics
-- 👮 **Child protection officers** — identify child labour and dropout cases
-
----
-
-## 📞 Child Protection Resources
-
-| Resource | Contact |
-|---|---|
-| Childline India (Child Labour Helpline) | **1098** (24×7, toll-free) |
-| National Scholarship Portal | scholarships.gov.in |
-| KGBV Programme | Contact your District Education Officer |
+| Dimension | Weight | Critical Threshold / Condition |
+|---|---|---|
+| 📅 **Attendance** | 30% | Attendance < 60% |
+| 📚 **Academic Score** | 25% | Score < 40% |
+| 💸 **Socioeconomic Status** | 20% | BPL Tier, Working Child |
+| 🚌 **Distance to School** | 10% | Distance > 10 km |
+| 👨‍👩‍👧 **Family Background** | 10% | Illiterate Parents, Prior Dropout |
+| 🚩 **Behavioral Flags** | 5% | Frequent Disciplinary Records |
 
 ---
 
 ## 📜 License
 
-MIT License — free to use, modify, and distribute.
+This project is licensed under the **MIT License** — free to use, modify, and distribute for educational and public-sector purposes.
 
 ---
 
-## 🏆 Credits
-
-Built for the **SRM Hackathon 2026**.
-
-- **Chart.js** — beautiful, responsive charts
-- **jsPDF** — client-side PDF generation
-- **scikit-learn** — ML model training and prediction
-- **Inter font** — Google Fonts
-
----
-
-*Keeping every child in school — one data point at a time.* 🎓
+<div align="center">
+  <sub>Built for the <strong>SRM Hackathon 2026</strong>. Keeping every child in school — one data point at a time. 🎓</sub>
+</div>

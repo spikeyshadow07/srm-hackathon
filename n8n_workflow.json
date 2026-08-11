@@ -1,0 +1,120 @@
+{
+  "name": "EduGuard AI - Dropout Risk Alert Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "eduguard-risk-alert",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "webhook-trigger",
+      "name": "Webhook — EduGuard Risk Alert"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-critical",
+              "leftValue": "={{ $json.body.summary ? $json.body.summary.critical : 0 }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "filter-critical",
+      "name": "Has Critical Students?"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=🚨 *EDUGUARD AI — CRITICAL DROPOUT RISK ALERT*\n\n*Alert Summary:*\n• Total Alerted: {{ $json.body.summary.total_alerted }}\n• Critical Students: {{ $json.body.summary.critical }}\n• High Risk Students: {{ $json.body.summary.high }}\n• Time: {{ $json.body.timestamp }}\n\n*Top At-Risk Student Details:*\n{{ $json.body.students.map(s => `• *${s.name}* (${s.grade}, ${s.school})\n  - Risk Score: ${s.risk_score}/100 [${s.risk_level}]\n  - Attendance: ${s.attendance}% | Academic: ${s.academic_score}%\n  - Interventions: ${s.recommended_actions.join(', ')}`).join('\\n\\n') }}\n\n📌 _Action Required: Please assign a school counselor or schedule a home visit immediately._",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        -100
+      ],
+      "id": "telegram-alert",
+      "name": "Send Telegram Alert"
+    },
+    {
+      "parameters": {
+        "fromEmail": "alerts@eduguard.gov",
+        "toEmail": "district.officer@education.gov",
+        "subject": "=🚨 EduGuard Alert: {{ $json.body.summary.critical }} Critical Dropout Cases Flagged",
+        "html": "=<div style=\"font-family:sans-serif;max-width:600px;padding:20px;border:1px solid #e2e8f0;border-radius:12px;\">\n  <h2 style=\"color:#dc2626;\">🛡️ EduGuard AI — Early Warning Dropout Alert</h2>\n  <p><strong>Timestamp:</strong> {{ $json.body.timestamp }}</p>\n  <p><strong>District Summary:</strong> {{ $json.body.summary.critical }} Critical Risk | {{ $json.body.summary.high }} High Risk</p>\n  <hr style=\"border:0;border-top:1px solid #e2e8f0;margin:16px 0;\" />\n  <h3>Student List:</h3>\n  <ul>\n    {{ $json.body.students.map(s => `<li><strong>${s.name}</strong> (${s.grade} - ${s.school}) — Risk Score: <span style=\"color:#dc2626;\">${s.risk_score}</span> | Attendance: ${s.attendance}%</li>`).join('') }}\n  </ul>\n  <p style=\"font-size:12px;color:#64748b;margin-top:20px;\">Sent automatically by EduGuard AI System connected to n8n Workflow Automation.</p>\n</div>"
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        460,
+        100
+      ],
+      "id": "email-alert",
+      "name": "Send Email Alert"
+    }
+  ],
+  "connections": {
+    "Webhook — EduGuard Risk Alert": {
+      "main": [
+        [
+          {
+            "node": "Has Critical Students?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Critical Students?": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Email Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1.0.0",
+  "id": "eduguard-n8n-workflow"
+}
